@@ -2,18 +2,17 @@
 
 import win32com.client
 import time
-app = win32com.client.Dispatch("PowerPoint.Application")
 
 def GotoSlide(Relative=None, Absolute=None):
   # Goto a slide in the current presentation. Does nothing
   # if no slideshow is active.
+  app = win32com.client.Dispatch("PowerPoint.Application")
   try:
     # Goto next slide in the current view
-    slideIndex = app.SlideShowWindows(1).View.CurrentShowPosition
     if not Absolute is None:
       slideIndex = Absolute
     else:
-      slideIndex += Relative
+      slideIndex = app.SlideShowWindows(1).View.CurrentShowPosition + Relative
     app.SlideShowWindows(1).View.GotoSlide(slideIndex)
     return slideIndex
   except:

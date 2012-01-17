@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Buttons</title>
+<SCRIPT LANGUAGE="JavaScript">
+function gotoPage (form) {
+    var TestVar = form.gotopage.value;
+    window.location = "/gotopage="+TestVar
+}
+</SCRIPT>
+</head>
+<style href>a {text-decoration: none} </style>
+<body>
+<h1 align="center">Remote control</h1>
+<center>
+<a href="/prevpage">
+<button
+  style="width:40%;height:150px;background-color:#FFe0e0;font-size:x-large">
+  <b>&lt;&lt;&lt;Previous</b></button></a>
+<a href="/nextpage">
+<button
+  style="width:40%;height:150px;background-color:#e0FFe0;font-size:x-large">
+  <b>Next &gt;&gt;&gt;</b></button></a>
+<FORM NAME="myform" ACTION="" METHOD="GET">
+<br>
+<table>
+  <td>
+    <span style="font-size:x-large">Page:</span><td>
+    <input
+       style="width:200px;height:50px;background-color:#e0FFFF;font-size:x-large"
+       type="text" name="gotopage" value="$current_page">
+  <td>
+    <INPUT
+       style="width:100px;height:50px;background-color:#e0e0FF;font-size:x-large"
+       TYPE="button"
+       NAME="button"
+       Value="Goto"
+       onClick="gotoPage(this.form)"
+       > 
+</table>
+</form>
+</center>
+</html>
+</body>
+</html>

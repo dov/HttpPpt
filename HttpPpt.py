@@ -23,6 +23,8 @@ import win32com.client
 import PPTSlideshow
 import datetime
 import socket
+import webbrowser
+from string import Template
 
 PORT = 8001
 
@@ -32,7 +34,7 @@ PORT = 8001
 last_slidetime = datetime.datetime.now()
 slide_command_inactive = 1.0
 
-class TestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class HttpPptHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   """The test example handler."""
   # Recognize the requests and serve different commands depending
   # on the page requested.
@@ -48,54 +50,15 @@ class TestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       elif self.path=="/prevpage":
         CurrentSlide = PPTSlideshow.GotoSlide(Relative=-1)
         last_slidetime = datetime.datetime.now()
-      elif "/gotopage=" in self.path:
-        new_page = int(self.path.split("=")[1])
+      elif "gotopage=" in self.path:
+        new_page = int(self.path.split("gotopage=")[1])
         CurrentSlide = PPTSlideshow.GotoSlide(Absolute=new_page)
         last_slidetime = datetime.datetime.now()
     
     # Always serve the interactive page
-    message = """
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Buttons</title>
-<SCRIPT LANGUAGE="JavaScript">
-function testResults (form) {{
-    var TestVar = form.inputbox.value;
-    window.location = "/gotopage="+TestVar
-}}
-</SCRIPT>
-</head>
-<style href>a {{text-decoration: none}} </style>
-<body>
-<h1 align="center">Remote control</h1>
-<center>
-<a href="/prevpage">
-<button
-  style="width:40%;height:150px;background-color:#FFe0e0">
-  <b>&lt;&lt;&lt;Previous</b></button></a>
-<a href="/nextpage">
-<button
-  style="width:40%;height:150px;background-color:#e0FFe0">
-  <b>Next &gt;&gt;&gt;</b></button></a>
-<FORM NAME="myform" ACTION="" METHOD="GET">
-<table>
-<td>Page:<td><input type="text" name="inputbox" value="{0}">
-<td><INPUT
-       style="width:100px;height:50px;background-color:#e0e0FF"
-       TYPE="button"
-       NAME="button"
-       Value="Goto"
-       onClick="testResults(this.form)"
-       > 
-</table>
-</form>
-</center>
-</body>
-</html>
-""".format(CurrentSlide)
+    message = (Template(open("index-template.html").read())
+               .substitute(current_page=CurrentSlide))
+                       
     self.send_response(200)
     self.send_header("Content-type", "text/html")
     self.send_header("Content-Length", len(message))
@@ -106,7 +69,16 @@ function testResults (form) {{
 
 Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
 
-httpd = SocketServer.TCPServer(("", PORT), TestHandler)
+httpd = SocketServer.TCPServer(("", PORT), HttpPptHandler)
+host = socket.gethostbyname(socket.gethostname())
 
+
+fh=open("usage.html","w")
+fh.write(Template(open("usage-template.html").read())
+         .substitute(host=host,
+                     port=PORT))
+fh.close()
+webbrowser.open("usage.html")
+                            
 print "Connect to http://%s:%d"%(socket.gethostbyname(socket.gethostname()),PORT)
 httpd.serve_forever()

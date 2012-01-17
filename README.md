@@ -16,6 +16,17 @@ commands directly:
 * http://server:8001/prevpage
 * http://server:8001/gotopage=42
 
+# Installation
+
+This programs requires the following tools to be installed externally:
+
+* python from http://python.org
+* Win32 Extensions for Python from http://sourceforge.net/projects/pywin32/
+
+Once these tools have been installed HttpPpt may be run by double clicking on HttpPpt.py .
+
+
+
 # License
 
 This script is released under the AGPL licence version 3.0
